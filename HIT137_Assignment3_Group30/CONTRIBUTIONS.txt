@@ -1,0 +1,10 @@
+Group-30 - Team Responsibilities
+
+William Wendl - S361240
+Interface, user controls, integration and submission.
+
+Kamala Thapa - S407760
+Puzzle logic, scrambling, hints and solving.
+
+Usha Khadka - S408025
+Image loading, tile transformations and image handling.

@@ -1,0 +1,44 @@
+HIT137 Assignment 3 verification
+Date: 27 September 2026
+Environment: Linux with a virtual X display; real Tk widgets.
+Python 3.12.14; OpenCV 5.0.0; NumPy 2.3.5; Pillow 12.3.0; Tk 9.0
+
+Command: python -m unittest -v test_image_puzzle.py
+
+test_boundary_mapping_and_off_image_events_for_every_grid (test_image_puzzle.GuiTests.test_boundary_mapping_and_off_image_events_for_every_grid) ... ok
+test_cancellation_bad_load_and_grid_change_preserve_current_round (test_image_puzzle.GuiTests.test_cancellation_bad_load_and_grid_change_preserve_current_round) ... ok
+test_hints_draw_both_circles_limit_and_clear_on_move (test_image_puzzle.GuiTests.test_hints_draw_both_circles_limit_and_clear_on_move) ... ok
+test_new_round_resets_everything_and_uses_chosen_grid (test_image_puzzle.GuiTests.test_new_round_resets_everything_and_uses_chosen_grid) ... ok
+test_optional_timer_expiry_lock_solve_and_new_round (test_image_puzzle.GuiTests.test_optional_timer_expiry_lock_solve_and_new_round) ... ok
+test_player_completion_notification_and_lock (test_image_puzzle.GuiTests.test_player_completion_notification_and_lock) ... ok
+test_real_mouse_bindings_and_original_is_reference_only (test_image_puzzle.GuiTests.test_real_mouse_bindings_and_original_is_reference_only) ... ok
+test_solve_button_resets_counters_draws_ticks_and_locks (test_image_puzzle.GuiTests.test_solve_button_resets_counters_draws_ticks_and_locks) ... ok
+test_all_formats_and_grids (test_image_puzzle.ImageTests.test_all_formats_and_grids) ... ok
+test_invalid_grid_or_board_is_rejected (test_image_puzzle.ImageTests.test_invalid_grid_or_board_is_rejected) ... ok
+test_non_image_empty_missing_and_corrupt_files (test_image_puzzle.ImageTests.test_non_image_empty_missing_and_corrupt_files) ... ok
+test_portrait_landscape_and_tiny_images_keep_proportions (test_image_puzzle.ImageTests.test_portrait_landscape_and_tiny_images_keep_proportions) ... ok
+test_different_random_seeds_make_different_puzzles (test_image_puzzle.PuzzleTests.test_different_random_seeds_make_different_puzzles) ... ok
+test_hint_limit_and_lifetime (test_image_puzzle.PuzzleTests.test_hint_limit_and_lifetime) ... ok
+test_invalid_indices_do_not_change_board_or_moves (test_image_puzzle.PuzzleTests.test_invalid_indices_do_not_change_board_or_moves) ... ok
+test_player_can_solve_with_only_specified_controls (test_image_puzzle.PuzzleTests.test_player_can_solve_with_only_specified_controls) ... ok
+test_scramble_count_all_types_no_duplicate_targets_and_solvable (test_image_puzzle.PuzzleTests.test_scramble_count_all_types_no_duplicate_targets_and_solvable) ... ok
+test_select_deselect_and_swap_count_one_move (test_image_puzzle.PuzzleTests.test_select_deselect_and_swap_count_one_move) ... ok
+test_solve_after_mixed_player_moves_restores_exact_pixels (test_image_puzzle.PuzzleTests.test_solve_after_mixed_player_moves_restores_exact_pixels) ... ok
+test_wrong_orientation_is_still_incorrect_in_right_home (test_image_puzzle.PuzzleTests.test_wrong_orientation_is_still_incorrect_in_right_home) ... ok
+test_all_short_rotation_reflection_sequences (test_image_puzzle.TileTests.test_all_short_rotation_reflection_sequences) ... ok
+test_double_horizontal_or_vertical_flip_restores (test_image_puzzle.TileTests.test_double_horizontal_or_vertical_flip_restores) ... ok
+test_four_rotations_restore_pixels_and_orientation (test_image_puzzle.TileTests.test_four_rotations_restore_pixels_and_orientation) ... ok
+test_invalid_flip_is_rejected_without_change (test_image_puzzle.TileTests.test_invalid_flip_is_rejected_without_change) ... ok
+test_pixels_are_encapsulated (test_image_puzzle.TileTests.test_pixels_are_encapsulated) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 1.345s
+
+OK
+
+The scramble test includes 100 random seeds at each of 3 grid sizes.
+Mouse events were generated on actual Tkinter canvas widgets.
+Windows/macOS installation and physical mouse use still require local verification.
+
+Additional layout verification: full GUI suite also passed at 1280 x 768.
+All captured windows fit within the screen; images remained square and divisible by each grid.
