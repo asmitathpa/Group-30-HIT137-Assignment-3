@@ -1,15 +1,6 @@
-"""Image preparation and puzzle rules for the Tkinter tile game.
-
-The GUI in app.py changes the game by calling PuzzleBoard methods. This file
-holds the image and tile state, similar to the model classes in the examples.
-"""
-
 from __future__ import annotations
-
 from pathlib import Path
 
-# app.py is the normal starting file. If models.py is opened directly, start
-# the application through app.py so its dependency setup runs first.
 if __name__ == "__main__":
     import subprocess
     import sys
@@ -31,18 +22,12 @@ _SCRAMBLE_COUNTS = {3: 6, 4: 12, 5: 20}
 
 
 class ImageProcessor:
-    """Decode and prepare user images for a grid of square tiles."""
-
+    
     SUPPORTED_EXTENSIONS = frozenset({".jpg", ".jpeg", ".png", ".bmp"})
 
     @staticmethod
     def load_and_prepare(path: str | Path, grid_size: int, max_side: int = 600) -> np.ndarray:
-        """Return a centered, BGR square image whose side divides by *grid_size*.
-
-        The picture is scaled down only when necessary.  Padding keeps its aspect
-        ratio intact, while a square result makes 90-degree tile turns possible.
-        ``max_side`` is an inclusive pixel limit for the final image.
-        """
+        
         if grid_size not in _SCRAMBLE_COUNTS:
             raise ValueError("Grid size must be 3, 4, or 5.")
         if not isinstance(max_side, int) or max_side < grid_size:
@@ -69,7 +54,6 @@ class ImageProcessor:
         if decoded.ndim == 2:
             image = cv2.cvtColor(decoded, cv2.COLOR_GRAY2BGR)
         elif decoded.shape[2] == 4:
-            # Composite transparent PNGs onto the same light background as the pad.
             alpha = decoded[:, :, 3:4].astype(np.float32) / 255.0
             image = np.rint(decoded[:, :, :3] * alpha + 242 * (1 - alpha)).astype(np.uint8)
         elif decoded.shape[2] == 3:
@@ -96,13 +80,11 @@ class ImageProcessor:
 
 
 class Tile:
-    """One picture piece, its home position, and its four corner labels."""
 
     def __init__(self, home_index: int, pixels: np.ndarray) -> None:
         self._home_index = home_index
         self._pixels = pixels.copy()
-        # Corner labels start at top-left, top-right, bottom-right, bottom-left.
-        # They let us detect orientation even when a piece looks symmetrical.
+        
         self._corners = [0, 1, 2, 3]
 
     @property
@@ -114,14 +96,12 @@ class Tile:
         return self._corners == [0, 1, 2, 3]
 
     def rotate_cw(self, quarter_turns: int = 1) -> None:
-        """Turn the tile clockwise in 90-degree steps."""
         for _ in range(quarter_turns % 4):
             self._pixels = cv2.rotate(self._pixels, cv2.ROTATE_90_CLOCKWISE)
             old = self._corners
             self._corners = [old[3], old[0], old[1], old[2]]
 
     def flip(self, axis: str) -> None:
-        """Flip the tile and update the order of its corner labels."""
         old = self._corners
         if axis == "horizontal":
             self._pixels = cv2.flip(self._pixels, 1)
@@ -136,13 +116,10 @@ class Tile:
         return self._pixels.copy()
 
     def matches_pixels(self, pixels: np.ndarray) -> bool:
-        """Check whether this piece looks right in its current orientation."""
         return np.array_equal(self._pixels, pixels)
 
 
 class PuzzleAction:
-    """Parent class for actions. Each child implements apply and undo.
-
     PuzzleBoard calls these methods on any action without needing to know its
     specific type. This is inheritance and polymorphism.
     """
@@ -191,7 +168,6 @@ class FlipAction(PuzzleAction):
 
 
 class PuzzleBoard:
-    """Own the tiles, scramble history, player moves, and completion state."""
 
     def __init__(
         self, prepared_bgr: np.ndarray, grid_size: int, rng: random.Random | None = None
@@ -221,8 +197,7 @@ class PuzzleBoard:
                 patch = self._original[top : top + self._tile_size, left : left + self._tile_size]
                 self._tiles.append(Tile(row * grid_size + column, patch))
 
-        # A plain colour, or identical pieces that look the same when turned,
-        # cannot make a visible puzzle.  Tell the player to choose another image.
+    
         first_pixels = self._tiles[0].render()
         if (
             all(tile.matches_pixels(first_pixels) for tile in self._tiles)
@@ -235,8 +210,6 @@ class PuzzleBoard:
                 "This image cannot make a visible puzzle. Choose one with more detail."
             )
 
-        # Generate all actions before applying any of them. Some pictures have
-        # identical or symmetric pieces, so retry if a scramble looks complete.
         for _ in range(80):
             actions = self._generate_scramble_actions()
             for action in actions:
@@ -298,7 +271,6 @@ class PuzzleBoard:
         return self._tiles[index].home_index
 
     def render_image(self) -> np.ndarray:
-        """Reassemble all current tile images into one BGR image."""
         result = np.empty_like(self._original)
         for index, tile in enumerate(self._tiles):
             row, column = divmod(index, self._grid_size)
@@ -308,7 +280,6 @@ class PuzzleBoard:
         return result
 
     def swap(self, first: int, second: int) -> bool:
-        """Apply one player swap, returning whether a move was accepted."""
         self._validate_index(first)
         self._validate_index(second)
         if first == second or self.is_solved:
@@ -316,21 +287,18 @@ class PuzzleBoard:
         return self._play(SwapAction(first, second))
 
     def rotate(self, index: int) -> bool:
-        """Apply one clockwise quarter turn as one move."""
         self._validate_index(index)
         if self.is_solved:
             return False
         return self._play(RotateAction(index, 1))
 
     def flip_horizontal(self, index: int) -> bool:
-        """Apply one left/right flip as one move."""
         self._validate_index(index)
         if self.is_solved:
             return False
         return self._play(FlipAction(index, "horizontal"))
 
     def get_hint(self) -> tuple[int, int] | None:
-        """Return an incorrect current position and that tile's home position."""
         incorrect = [index for index in range(len(self._tiles)) if not self.tile_is_correct(index)]
         if not incorrect:
             return None
@@ -338,7 +306,6 @@ class PuzzleBoard:
         return current_index, self.tile_home(current_index)
 
     def solve(self) -> None:
-        """Undo every player action and scramble action, then clear the score."""
         if not self._scramble_active:
             return
         for action in reversed(self._player_actions):
