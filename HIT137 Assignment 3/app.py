@@ -1,11 +1,4 @@
-"""Tkinter window and launcher for the image tile puzzle.
-
-Run app.py to play. This file uses the frame-and-widgets style of the class
-examples; models.py stores the puzzle data and image rules.
-"""
-
 from __future__ import annotations
-
 from pathlib import Path
 import faulthandler
 import os
@@ -37,7 +30,6 @@ def _install_requirements():
 
 
 def _dependencies_available():
-    """Check packages in the local environment without opening Tkinter."""
     try:
         result = subprocess.run(
             [str(VENV_PYTHON), "-c", "import cv2, numpy, PIL, tkinter"],
@@ -51,7 +43,6 @@ def _dependencies_available():
 
 
 def _start_with_local_python():
-    """Run app.py in its local environment when started by another Python."""
     if not VENV_PYTHON.is_file():
         print("Creating the local Python environment.", flush=True)
         subprocess.run([sys.executable, "-m", "venv", str(VENV_DIR)], check=True)
@@ -68,7 +59,6 @@ def _start_with_local_python():
     return completed.returncode
 
 
-# Keep a log when app.py is opened directly in Python Launcher or IDLE.
 if __name__ == "__main__":
     _startup_log = (PROJECT_DIR / "startup.log").open("a", encoding="utf-8", buffering=1)
     faulthandler.enable(file=_startup_log)
@@ -88,8 +78,6 @@ if __name__ == "__main__":
         print(f"Game process exited with status {_child_exit_code}.", file=_startup_log)
         raise SystemExit(_child_exit_code)
 
-
-# Import third-party packages after setup so a direct launch can install them.
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
@@ -138,7 +126,6 @@ class Application(tk.Frame):
         self.refresh()
 
     def create_widgets(self):
-        """Make the labels, buttons and two image canvases."""
         self.configure(bg="#f3f6fa", padx=18, pady=14)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(3, weight=1)
@@ -281,7 +268,6 @@ class Application(tk.Frame):
         self.status_var.set(f"Loaded {Path(path).name}. Restore the puzzle on the right.")
 
     def _tile_at(self, x, y):
-        """Get the tile number beneath a mouse click."""
         if self.board is None or self._game_over:
             return None
         side = self.board.tile_size * self.board.grid_size
