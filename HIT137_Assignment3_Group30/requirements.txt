@@ -1,0 +1,5 @@
+# Tkinter is supplied with the standard python.org Windows installer.
+# OpenCV performs processing; Pillow bridges NumPy images into Tkinter.
+numpy>=1.26,<3
+opencv-python-headless>=4.8,<6
+Pillow>=10,<13
