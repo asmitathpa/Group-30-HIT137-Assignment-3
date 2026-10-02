@@ -120,9 +120,6 @@ class Tile:
 
 
 class PuzzleAction:
-    PuzzleBoard calls these methods on any action without needing to know its
-    specific type. This is inheritance and polymorphism.
-    """
 
     def apply(self, board: PuzzleBoard) -> None:
         raise NotImplementedError
